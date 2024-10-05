@@ -10,11 +10,17 @@ const register = asyncHandler(async(req, res) => {
         // Checking if user already exists
         const checkingUser = await userModel.findOne({ email: email })
         if (checkingUser) {
-            return res.status(400).send('User Already Exists')
+            //Authenticate user_pass
+            const isMatch = await bcrypt.compare(password,checkingUser.password);
+            if (isMatch){
+                return res.status(400).send('User Authenticated')
+            }
+            else{
+                return res.status(400).send('Invalid password')
+            }
         }
 
         const hashedPassword = await bcrypt.hash(password, 10)
-
         const userInfo = {
             email: email,
             password: hashedPassword
