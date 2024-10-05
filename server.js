@@ -3,6 +3,9 @@ require('dotenv').config()
 const cors = require('cors')
 const mongoose = require('mongoose')
 
+// MODULE ROUTES
+const userRouter = require('./Routes/userRoutes')
+
 // VARIABLES
 const app = express()
 const port = process.env.PORT
@@ -24,6 +27,8 @@ const connectDB = async () => {
       console.error('Error connecting to MongoDB:', err);
     }
 }
+
+app.use('/user', userRouter)
 
 // SERVER LISTENING FUNCTION
 app.listen(port, async() => {
