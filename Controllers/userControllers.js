@@ -2,7 +2,7 @@ const asyncHandler = require('express-async-handler')
 const userModel = require('../Models/userModel')
 const bcrypt = require('bcrypt')
 
-// Controller to register new users
+// Controller to register/Login new users
 const register = asyncHandler(async(req, res) => {
     const { email, password } = req.body
 
@@ -22,8 +22,10 @@ const register = asyncHandler(async(req, res) => {
 
         const hashedPassword = await bcrypt.hash(password, 10)
         const userInfo = {
+            username: '',
             email: email,
-            password: hashedPassword
+            password: hashedPassword,
+            friends: []
         }
 
         const newUser = new userModel(userInfo)
@@ -41,4 +43,24 @@ const register = asyncHandler(async(req, res) => {
     }
 })
 
-module.exports = { register }
+// Controller to add friends 
+const addFriends = asyncHandler(async(req, res) => {
+    const { friendId, userId } = req.body
+
+    try{
+        const data = userModel.updateOne(
+            { _id: userId },
+            { $push: { friends: friendId }}
+        )
+
+        if (!data) return res.status(404).send('Something went wrong');
+
+        res.status(200).send('Success')
+    }
+    catch(err) {
+        console.log(err)
+        req.status(500).send('Internal Server Error')
+    }
+})
+
+module.exports = { register, addFriends }
