@@ -13,11 +13,20 @@ const register = asyncHandler(async(req, res) => {
             //Authenticate user_pass
             const isMatch = await bcrypt.compare(password,checkingUser.password);
             if (isMatch){
-                return res.status(400).send('User Authenticated')
+                // return res.status(400).send('User Authenticated')
+                res.status(200).json({
+                    Message: 'User Authenticated Successfully',
+                    userId: checkingUser._id,
+                    authStatus: "True"
+                })
             }
             else{
-                return res.status(400).send('Invalid password')
+                res.status(200).json({
+                    Message: 'Invalid password',
+                    authStatus: "False"
+                })
             }
+            return;
         }
 
         const hashedPassword = await bcrypt.hash(password, 10)
@@ -34,7 +43,8 @@ const register = asyncHandler(async(req, res) => {
 
         res.status(200).json({
             Message: 'User Created Successfully',
-            userId: newUser._id
+            userId: newUser._id,
+            authStatus: "True"
         })
     }
     catch(err) {
