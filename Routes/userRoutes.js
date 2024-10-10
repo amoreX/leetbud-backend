@@ -8,4 +8,6 @@ userRoutes.post('/register', userController.register)
 // Route ot add friends 
 userRoutes.post('/add', userController.addFriends)
 
+//Route to get friends
+userRoutes.post('/friends',userController.getFriends)
 module.exports = userRoutes

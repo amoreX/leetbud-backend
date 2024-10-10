@@ -1,6 +1,7 @@
 const asyncHandler = require('express-async-handler')
 const userModel = require('../Models/userModel')
 const bcrypt = require('bcrypt')
+const mongoose = require('mongoose')
 
 // Controller to register/Login new users
 const register = asyncHandler(async(req, res) => {
@@ -17,6 +18,7 @@ const register = asyncHandler(async(req, res) => {
                 res.status(200).json({
                     Message: 'User Authenticated Successfully',
                     userId: checkingUser._id,
+                    friends:checkingUser.friends,
                     authStatus: "True"
                 })
             }
@@ -73,4 +75,23 @@ const addFriends = asyncHandler(async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 });
-module.exports = { register, addFriends }
+
+//Controller to get friends
+const getFriends=asyncHandler(async(req,res)=>{
+    const {userId}=req.body;
+    try{
+        const findingUser = await userModel.findOne({ _id: new mongoose.Types.ObjectId(userId)  });
+        if(findingUser){
+            res.status(200).json({
+                Message: 'Fetched Friends Successfully',
+                friends:findingUser.friends
+            })
+        }
+        
+
+    }catch(err){
+        console.log(err);
+        res.status(500).send('Internal Server Error');
+    }
+});
+module.exports = { register, addFriends,getFriends }
