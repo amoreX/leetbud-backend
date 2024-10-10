@@ -54,23 +54,23 @@ const register = asyncHandler(async(req, res) => {
 })
 
 // Controller to add friends 
-const addFriends = asyncHandler(async(req, res) => {
-    const { friendId, userId } = req.body
+const addFriends = asyncHandler(async (req, res) => {
+    const { friendId, userId } = req.body;
 
-    try{
-        const data = userModel.updateOne(
+    try {
+        const data = await userModel.updateOne(
             { _id: userId },
-            { $push: { friends: friendId }}
-        )
+            { $push: { friends: friendId } }
+        );
 
-        if (!data) return res.status(404).send('Something went wrong');
+        if (data.modifiedCount === 0) {
+            return res.status(404).send('Friend not found');
+        }
 
-        res.status(200).send('Success')
+        res.status(200).send('Friend added successfully');
+    } catch (err) {
+        console.log(err);
+        res.status(500).send('Internal Server Error');
     }
-    catch(err) {
-        console.log(err)
-        req.status(500).send('Internal Server Error')
-    }
-})
-
+});
 module.exports = { register, addFriends }
